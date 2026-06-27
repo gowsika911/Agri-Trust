@@ -19,7 +19,13 @@ mongoose
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
+const cropRoutes = require('./routes/cropRoutes');
+const supplyRoutes = require('./routes/supplyRoutes');
+
+
+app.use('/api/supply', supplyRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/crops', cropRoutes);
 
 // Default Route
 app.get('/', (req, res) => {
