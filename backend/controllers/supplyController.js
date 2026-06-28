@@ -1,4 +1,5 @@
 const Crop = require('../models/Crop');
+const { addBlock } = require('../blockchain/fabricClient');
 
 // ADD SUPPLY CHAIN STEP → PUT /api/supply/:cropId/add-step
 const addSupplyChainStep = async (req, res) => {
@@ -41,6 +42,17 @@ const addSupplyChainStep = async (req, res) => {
     }
 
     await crop.save();
+
+    // Add new block to blockchain
+    await addBlock(req.params.cropId, {
+      type: 'SUPPLY_CHAIN_UPDATE',
+      stepName,
+      handledBy,
+      location,
+      price,
+      description,
+      timestamp: new Date().toISOString(),
+    });
 
     return res.status(200).json({
       success: true,

@@ -1,6 +1,7 @@
 const Crop = require('../models/Crop');
 const { generateQRCode } = require('../utils/qrGenerator');
 const { v4: uuidv4 } = require('uuid');
+const { createGenesisBlock } = require('../blockchain/fabricClient');
 
 // CREATE CROP → POST /api/crops
 const createCrop = async (req, res) => {
@@ -58,6 +59,19 @@ const createCrop = async (req, res) => {
       qrCode,
       cropId,
       status: 'harvested',
+    });
+
+    // Create genesis block on blockchain
+    await createGenesisBlock(cropId, {
+      cropName,
+      variety,
+      quantity,
+      unit: unit || 'kg',
+      pricePerUnit,
+      harvestDate,
+      location,
+      farmerName: req.user.name,
+      isOrganic: isOrganic || false,
     });
 
     return res.status(201).json({
